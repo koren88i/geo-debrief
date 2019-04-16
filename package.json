@@ -13,6 +13,7 @@
     "babel-preset-es2017": "^6.24.1",
     "core-js": "^2.6.5",
     "leaflet": "^1.4.0",
+    "moment": "^2.24.0",
     "vue": "^2.6.6",
     "vue-moment": "^4.0.0",
     "vue-slider-component": "^3.0.26",

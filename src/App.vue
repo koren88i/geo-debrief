@@ -2,23 +2,23 @@
 
   <div id="app">
     <HelloWorld style="height: 500px; width: 500px" msg="Welcome to Your Vue.js App"/>
-    <DatePickerForm style="height: 500px; width: 500px"/>
-    <SimpleForm style="height: 500px; width: 500px"/>
+<!--    <DatePickerForm style="height: 500px; width: 500px"/>-->
+<!--    <SimpleForm style="height: 500px; width: 500px"/>-->
   </div>
 
 </template>
 
 <script>
 import HelloWorld from './components/HelloWorld.vue'
-import DatePickerForm from './components/DatePickerForm.vue'
-import SimpleForm from './components/SimpleForm.vue'
+// import DatePickerForm from './components/DatePickerForm.vue'
+// import SimpleForm from './components/SimpleForm.vue'
 
 export default {
   name: 'app',
   components: {
     HelloWorld,
-    DatePickerForm,
-    SimpleForm
+    // DatePickerForm,
+    // SimpleForm
   }
 }
 </script>
