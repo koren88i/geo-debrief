@@ -100,33 +100,31 @@
 </template>
 
 <script>
-    import Vue from 'vue';
-
-
-    new Vue({
-        el: '#app',
-        data: {
-            form: {
-                formName: 'Moment\'s Debrief',
-                userName: '',
-                dateFrom : '',
-                dateTo: '',
-                numbers: '',
-                cubeToRun: 'Interactive',
-                classificationType: [],
-                workHours: 0
-            },
-            showSubmitFeedback: false
-        },
-        methods: {
-            fakeSubmit(){
-                this.showSubmitFeedback = true;
-                setTimeout(() => {
-                    this.showSubmitFeedback = false;
-                }, 3000);
-            }
+    export default {
+      data: function(){
+        return {
+          form: {
+            formName: 'Moment\'s Debrief',
+            userName: '',
+            dateFrom : '',
+            dateTo: '',
+            numbers: '',
+            cubeToRun: 'Interactive',
+            classificationType: [],
+            workHours: 0
+          },
+          showSubmitFeedback: false
         }
-    });
+      },
+      methods: {
+        fakeSubmit(){
+          this.showSubmitFeedback = true;
+          setTimeout(() => {
+            this.showSubmitFeedback = false;
+          }, 3000);
+        }
+      }
+    }
 </script>
 
 <style scoped>

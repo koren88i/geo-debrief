@@ -1,8 +1,9 @@
 <template>
     <div class="hello" style="height: 100%">
         <vue-slider :included="true" :marks="true" v-model="value" :data="sliderOptions" :fixed="true"></vue-slider>
-        <l-map :zoom="zoom" :center="center">
+        <l-map :options="{measureControl:true}" :zoom="zoom" :center="center">
             <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
+            <l-marker-cluster :options="{zoomToBoundsOnClick: false}">
             <div v-for="group in getPolygons()" :key="group.timestamp">
                 <!--            <l-polygon v-for="s in group.input"-->
                 <!--                       :key="s.properties.rank"-->
@@ -12,18 +13,18 @@
                 <!--                       @l-mouseover=change_color(s)>-->
                 <!--                <polygon-popup :content="s.properties.data" />-->
                 <!--            </l-polygon>-->
-                <l-geojson v-for="s in group.input"
+                <MyGeoJson v-for="s in group.input"
                             :key="s.properties.rank"
                             :geojson="s"
                             :options="options"
                             :options-style="s.properties.style">
-                </l-geojson>
-                <l-geojson v-for="s in group.output"
+                </MyGeoJson>
+                <MyGeoJson v-for="s in group.output"
                             :key="s.properties.rank"
                             :geojson="s"
                            :options="options"
                             :options-style="s.properties.style">
-                </l-geojson>
+                </MyGeoJson>
                 <!--            <l-polygon v-for="s in group.output"-->
                 <!--                       :key="s.properties.rank"-->
                 <!--                       :color="s.properties.style.color"-->
@@ -33,25 +34,59 @@
                 <!--                <polygon-popup :content="s.properties.data" />-->
                 <!--            </l-polygon>-->
             </div>
+<!--                <l-marker :key="c" v-for="c in getPoints()" :lat-lng="c"></l-marker>-->
+<!--                <MyGeoJson :key="g" v-for="g in getGeoJSONs()" :geojson="g"></MyGeoJson>-->
+            </l-marker-cluster>
         </l-map>
     </div>
 </template>
 
 <script>
   import Vue from 'vue';
+  import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
   import {LGeoJson, LMap, LPolygon, LPopup, LTileLayer} from 'vue2-leaflet';
-  import {Icon, latLng} from 'leaflet'
+  import {Icon, latLng, DomEvent, GeoJSON} from 'leaflet'
+  import {findRealParent, propsBinder} from 'vue2-leaflet'
   import 'leaflet/dist/leaflet.css'
   import VueSlider from 'vue-slider-component'
   import 'vue-slider-component/theme/default.css'
   import GeoJsonPopup from "./GeoJsonPopup";
+  import MyGeoJson from "./MyGeoJson";
+
+  // class MyGeoJSON extends GeoJSON {
+  //   getLatLng(){
+  //     return super.getBounds().getCenter();
+  //   }
+  // }
+
+  GeoJSON.prototype.getLatLng = function() {
+    return this.getBounds().getCenter();
+  };
+
+  // const A = Vue.extend({
+  //   mixins: [LGeoJson],
+  //   methods: {
+  //     getLatLng: function() {
+  //       return this.getBounds().getCenter();
+  //     }
+  //   },
+  //   mounted () {
+  //     this.mapObject = GeoJSON(this.geojson, this.mergedOptions);
+  //     DomEvent.on(this.mapObject, this.$listeners);
+  //     propsBinder(this, this.mapObject, this.$options.props);
+  //     this.parentContainer = findRealParent(this.$parent, true);
+  //     this.parentContainer.addLayer(this, !this.visible);
+  //     this.$nextTick(() => {
+  //       this.$emit('ready', this.mapObject);
+  //     });
+  //   }
+  // });
 
   Vue.component('l-map', LMap);
   Vue.component('l-tile-layer', LTileLayer);
   Vue.component('l-polygon', LPolygon);
   Vue.component('l-popup', LPopup);
-  Vue.component('l-geojson', LGeoJson);
-
+  Vue.component('l-marker-cluster', Vue2LeafletMarkerCluster);
 
   delete Icon.Default.prototype._getIconUrl;
 
@@ -63,7 +98,7 @@
 
   const polygons = [
     {
-      timestamp: 0,
+      timestamp: 1559059200,
       input: [
         {
           'type': 'Feature',
@@ -142,7 +177,7 @@
       ]
     },
     {
-      timestamp: 1,
+      timestamp: 1559059380,
       input: [
         {
           'type': 'Feature',
@@ -221,7 +256,7 @@
       ]
     },
     {
-      timestamp: 2,
+      timestamp: 1559059620,
       input: [
         {
           'type': 'Feature',
@@ -309,7 +344,7 @@
 
   export default {
     name: 'HelloWorld',
-    components: {LMap, VueSlider},
+    components: {LMap, VueSlider, MyGeoJson},
     props: {
       msg: String
     },
@@ -327,7 +362,7 @@
         url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
         polygons: polygons,
-        value: [0, 1],
+        value: [polygons[0].timestamp, polygons[0].timestamp + 180],
         sliderOptions: polygons.map(p => p.timestamp)
       }
     },
@@ -339,6 +374,17 @@
         const polygons = this.polygons.filter(x => x.timestamp >= this.value[0] && x.timestamp <= this.value[1]);
 
         return polygons === undefined ? {input: [], output: []} : polygons;
+      },
+      getPoints() {
+        const bla = [];
+        for (let i = 0; i< 30000;i++) {
+          bla.push([32.86 + 50 * Math.random() - 0.05, 35.35 + 40 * Math.random() - 0.08])
+          // bla.push([35,32])
+        }
+        return bla;
+      },
+      getGeoJSONs() {
+        return polygons[1].input;
       },
       entries(obj) {
         var ownProps = Object.keys(obj),
